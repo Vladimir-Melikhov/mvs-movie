@@ -179,8 +179,8 @@ class UserProfileView(DetailView):
         context = super().get_context_data(**kwargs)
         user = self.object
 
-        context['ratings_count'] = user.get_ratings_count()
-        context['comments_count'] = user.get_comments_count()
+        #context['ratings_count'] = user.get_ratings_count()
+        #context['comments_count'] = user.get_comments_count()
 
         # Get recent ratings (will be implemented when ratings app is ready)
         # context['recent_ratings'] = user.ratings.select_related('movie')[:5]

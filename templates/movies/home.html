@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}VideoHub - Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="mb-12">
+    <div class="relative h-96 rounded-lg overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1200"
+             alt="Featured Movie"
+             class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent">
+            <div class="absolute bottom-12 left-12 max-w-xl">
+                <h2 class="text-5xl font-bold mb-4">Featured Movie</h2>
+                <p class="text-lg mb-6 text-gray-300">
+                    Discover the best movies and series. Watch unlimited entertainment anytime.
+                </p>
+                <div class="flex space-x-4">
+                    <button class="bg-emerald-500 text-white px-8 py-3 rounded font-semibold hover:bg-emerald-600 transition flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+                        </svg>
+                        Watch Now
+                    </button>
+                    <button class="bg-gray-700 bg-opacity-70 px-8 py-3 rounded font-semibold hover:bg-gray-600 transition">
+                        More Info
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Filter -->
+<section class="mb-8">
+    <div class="flex flex-wrap gap-3">
+        <a href="#"
+           class="category-btn px-6 py-2 rounded-full border border-gray-700 hover:border-emerald-500 transition {% if not selected_category %}active{% endif %}">
+            All
+        </a>
+        {% for category in categories %}
+        <a href="?category={{ category.slug }}"
+           class="category-btn px-6 py-2 rounded-full border border-gray-700 hover:border-emerald-500 transition {% if selected_category.slug == category.slug %}active{% endif %}">
+            {{ category.name }}
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Movies Grid -->
+<section>
+    <h2 class="text-2xl font-bold mb-6">
+        {% if selected_category %}{{ selected_category.name }}{% else %}All Movies{% endif %}
+    </h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        {% for movie in movies %}
+        <a href="#" class="movie-card cursor-pointer">
+            <div class="relative rounded-lg overflow-hidden bg-gray-900">
+                {% if movie.poster %}
+                <img src="{{ movie.poster.url }}"
+                     alt="{{ movie.title }}"
+                     class="w-full h-72 object-cover">
+                {% else %}
+                <img src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=400"
+                     alt="{{ movie.title }}"
+                     class="w-full h-72 object-cover">
+                {% endif %}
+                <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-70 transition flex items-center justify-center opacity-0 hover:opacity-100">
+                    <button class="bg-emerald-500 p-4 rounded-full hover:scale-110 hover:bg-emerald-600 transition">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="absolute top-2 right-2 bg-black bg-opacity-75 px-2 py-1 rounded text-sm">
+                    <span>{{ movie.average_rating|floatformat:1|default:"N/A" }}</span> ⭐
+                </div>
+            </div>
+            <div class="mt-2">
+                <h3 class="font-semibold truncate">{{ movie.title }}</h3>
+                <p class="text-sm text-gray-400">{{ movie.year }}</p>
+            </div>
+        </a>
+        {% empty %}
+        <div class="col-span-full text-center py-12">
+            <p class="text-gray-400 text-xl">No movies found</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="flex justify-center mt-12 space-x-2">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if selected_category %}&category={{ selected_category.slug }}{% endif %}"
+           class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition">
+            First
+        </a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}"
+           class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition">
+            Previous
+        </a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <span class="px-4 py-2 bg-emerald-500 rounded">{{ num }}</span>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a href="?page={{ num }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}"
+           class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition">
+            {{ num }}
+        </a>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}"
+           class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition">
+            Next
+        </a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}"
+           class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition">
+            Last
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
