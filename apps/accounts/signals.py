@@ -12,8 +12,6 @@ def user_post_save(sender, instance, created, **kwargs):
     Signal handler for post-save User model.
     """
     if created:
-        # Perform actions for newly created users
-        # For example, create related models or send welcome email
         pass
 
 

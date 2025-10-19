@@ -9,6 +9,7 @@ from django.contrib.auth.views import (
     PasswordResetView,
     PasswordResetConfirmView
 )
+from django.views import View
 from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -141,32 +142,89 @@ class CustomPasswordResetView(PasswordResetView):
         return redirect(self.success_url)
 
 
-class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+class CustomPasswordResetConfirmView(View):
     """
     Custom password reset confirm view.
-    
+
     Allows users to set a new password using the token from email.
     """
-    
-    form_class = CustomSetPasswordForm
+
     template_name = 'accounts/password_reset_confirm.html'
-    success_url = reverse_lazy('accounts:password_reset_complete')
-    
-    def form_valid(self, form: CustomSetPasswordForm) -> HttpResponse:
-        """Handle successful password reset."""
-        messages.success(
-            self.request,
-            _('Your password has been reset successfully. You can now login with your new password.')
-        )
-        return super().form_valid(form)
+
+    def get(self, request, token):
+        """Display the password reset form."""
+        try:
+            reset_token = PasswordResetToken.objects.select_related('user').get(
+                token=token,
+                is_used=False
+            )
+
+            if reset_token.is_expired():
+                messages.error(
+                    request,
+                    _('This password reset link has expired. Please request a new one.')
+                )
+                return render(request, self.template_name, {'validlink': False})
+
+            form = CustomSetPasswordForm(user=reset_token.user)
+            return render(request, self.template_name, {
+                'form': form,
+                'validlink': True,
+                'token': token
+            })
+
+        except PasswordResetToken.DoesNotExist:
+            messages.error(
+                request,
+                _('Invalid password reset link.')
+            )
+            return render(request, self.template_name, {'validlink': False})
+
+    def post(self, request, token):
+        """Process the password reset form."""
+        try:
+            reset_token = PasswordResetToken.objects.select_related('user').get(
+                token=token,
+                is_used=False
+            )
+
+            if reset_token.is_expired():
+                messages.error(
+                    request,
+                    _('This password reset link has expired. Please request a new one.')
+                )
+                return render(request, self.template_name, {'validlink': False})
+
+            form = CustomSetPasswordForm(user=reset_token.user, data=request.POST)
+
+            if form.is_valid():
+                form.save()
+
+                reset_token.mark_as_used()
+
+                messages.success(
+                    request,
+                    _('Your password has been reset successfully. You can now login with your new password.')
+                )
+
+                return redirect('accounts:password_reset_complete')
+
+            return render(request, self.template_name, {
+                'form': form,
+                'validlink': True,
+                'token': token
+            })
+
+        except PasswordResetToken.DoesNotExist:
+            messages.error(
+                request,
+                _('Invalid password reset link.')
+            )
+            return render(request, self.template_name, {'validlink': False})
 
 
 class UserProfileView(DetailView):
-    """
-    View for displaying user profile.
-
-    Shows public profile information including statistics.
-    """
+    """View for displaying user profile."""
 
     model = User
     template_name = 'accounts/profile.html'
@@ -189,11 +247,7 @@ class UserProfileView(DetailView):
 
 
 class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
-    """
-    View for updating user profile.
-
-    Allows users to update their profile information.
-    """
+    """View for updating user profile."""
 
     model = User
     form_class = UserProfileUpdateForm
@@ -309,9 +363,5 @@ def password_reset_done(request: HttpRequest) -> HttpResponse:
 
 
 def password_reset_complete(request: HttpRequest) -> HttpResponse:
-    """
-    View for password reset complete page.
-
-    Shows a message after password has been reset successfully.
-    """
+    """View for password reset complete page."""
     return render(request, 'accounts/password_reset_complete.html')

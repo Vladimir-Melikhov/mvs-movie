@@ -217,7 +217,7 @@ class UserProfileUpdateForm(forms.ModelForm):
             'placeholder': 'Enter your first name'
         })
     )
-    
+
     last_name = forms.CharField(
         label=_('Last Name'),
         max_length=150,
@@ -227,7 +227,7 @@ class UserProfileUpdateForm(forms.ModelForm):
             'placeholder': 'Enter your last name'
         })
     )
-    
+ 
     bio = forms.CharField(
         label=_('Biography'),
         max_length=500,
@@ -238,7 +238,7 @@ class UserProfileUpdateForm(forms.ModelForm):
             'rows': 4
         })
     )
-    
+
     avatar = forms.ImageField(
         label=_('Avatar'),
         required=False,
@@ -247,15 +247,15 @@ class UserProfileUpdateForm(forms.ModelForm):
             'accept': 'image/*'
         })
     )
-    
+
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'bio', 'avatar')
-    
+
     def clean_avatar(self):
         """Validate avatar file size and type."""
         avatar = self.cleaned_data.get('avatar')
-        
+
         if avatar:
             # Check file size (max 5MB)
             if avatar.size > 5 * 1024 * 1024:
@@ -263,12 +263,12 @@ class UserProfileUpdateForm(forms.ModelForm):
                     _('Avatar file size cannot exceed 5MB.'),
                     code='file_too_large'
                 )
-            
+
             # Check file type
             if not avatar.content_type.startswith('image/'):
                 raise ValidationError(
                     _('Only image files are allowed.'),
                     code='invalid_file_type'
                 )
-        
+
         return avatar

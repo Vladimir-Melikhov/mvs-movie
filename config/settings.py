@@ -24,6 +24,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.accounts',
     'apps.core',
+    'apps.movies',
+
 ]
 
 MIDDLEWARE = [
@@ -159,7 +161,7 @@ else:
 
 SITE_URL = 'http://127.0.0.1:8000'
 
-# Cache configuration
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
