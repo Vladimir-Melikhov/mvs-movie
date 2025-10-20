@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+{% load static %}
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -51,10 +53,10 @@
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-8">
-                    <a href="#" class="text-3xl font-bold text-emerald-500">Mvs-Movie</a>
+                    <a href="{% url 'movies:home' %}" class="text-3xl font-bold text-emerald-500">Mvs-Movie</a>
                     <nav class="hidden md:flex space-x-6">
-                        <a href="#" class="hover:text-gray-300 transition">Home</a>
-                        <a href="#" class="hover:text-gray-300 transition">Movies</a>
+                        <a href="{% url 'movies:home' %}" class="hover:text-gray-300 transition">Home</a>
+                        <a href="{% url 'movies:home' %}" class="hover:text-gray-300 transition">Movies</a>
                         <a href="#" class="hover:text-gray-300 transition">Categories</a>
                         {% if user.is_authenticated %}
                         <a href="#" class="hover:text-gray-300 transition">My Ratings</a>
