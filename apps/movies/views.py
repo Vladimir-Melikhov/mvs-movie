@@ -10,7 +10,9 @@ from .models import Category, Movie
 
 
 class MovieListView(ListView):
-    """View for displaying list of movies with filtering and pagination."""
+    """
+    View for displaying list of movies with filtering and pagination.
+    """
 
     model = Movie
     template_name = 'movies/home.html'
@@ -131,6 +133,7 @@ class MovieDetailView(DetailView):
             except Rating.DoesNotExist:
                 context['user_rating'] = None
 
+            # Check if user has commented
             try:
                 from apps.ratings.models import Comment
                 user_comment = Comment.objects.get(
@@ -141,8 +144,10 @@ class MovieDetailView(DetailView):
             except Comment.DoesNotExist:
                 context['user_comment'] = None
 
+        # Add comments
         context['comments'] = movie.comments.select_related('user').order_by('-created_at')[:10]
 
+        # Add related movies (same category)
         context['related_movies'] = Movie.objects.filter(
             category=movie.category
         ).exclude(
@@ -153,7 +158,9 @@ class MovieDetailView(DetailView):
 
 
 class CategoryMoviesView(ListView):
-    """View for displaying movies in a specific category."""
+    """
+    View for displaying movies in a specific category.
+    """
 
     model = Movie
     template_name = 'movies/category_movies.html'
@@ -176,7 +183,9 @@ class CategoryMoviesView(ListView):
 
 
 def search_movies(request: HttpRequest) -> HttpResponse:
-    """View for searching movies."""
+    """
+    View for searching movies.
+    """
     query = request.GET.get('q', '')
     movies = []
 

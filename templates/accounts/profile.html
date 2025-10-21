@@ -7,7 +7,7 @@
     <!-- Profile Header -->
     <div class="bg-gray-900 rounded-lg shadow-xl p-8 border border-gray-800 mb-8">
         <div class="flex items-center space-x-6">
-            <div class="w-24 h-24 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-full flex items-center justify-center text-4xl font-bold">
+            <div class="w-24 h-24 bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center text-4xl font-bold">
                 {{ profile_user.username|first|upper }}
             </div>
             <div class="flex-1">
@@ -17,7 +17,7 @@
                 </p>
                 {% if user == profile_user %}
                 <a href="{% url 'accounts:settings' %}"
-                   class="inline-block bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded transition">
+                   class="inline-block bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded transition">
                     Edit Profile
                 </a>
                 {% endif %}
@@ -27,15 +27,15 @@
         <!-- Statistics -->
         <div class="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-gray-800">
             <div class="text-center">
-                <p class="text-3xl font-bold text-emerald-500">{{ profile_user.rating_set.count }}</p>
+                <p class="text-3xl font-bold text-red-500">{{ profile_user.rating_set.count }}</p>
                 <p class="text-gray-400 mt-1">Ratings</p>
             </div>
             <div class="text-center">
-                <p class="text-3xl font-bold text-emerald-500">{{ profile_user.comment_set.count }}</p>
+                <p class="text-3xl font-bold text-red-500">{{ profile_user.comment_set.count }}</p>
                 <p class="text-gray-400 mt-1">Comments</p>
             </div>
             <div class="text-center">
-                <p class="text-3xl font-bold text-emerald-500">
+                <p class="text-3xl font-bold text-red-500">
                     {{ profile_user.rating_set.aggregate.avg_score|floatformat:1|default:"N/A" }}
                 </p>
                 <p class="text-gray-400 mt-1">Avg Rating</p>
@@ -47,12 +47,12 @@
     <div x-data="{ activeTab: 'ratings' }" class="mb-8">
         <div class="flex space-x-4 border-b border-gray-800 mb-6">
             <button @click="activeTab = 'ratings'"
-                    :class="activeTab === 'ratings' ? 'border-emerald-500 text-emerald-500' : 'border-transparent text-gray-400'"
+                    :class="activeTab === 'ratings' ? 'border-red-500 text-red-500' : 'border-transparent text-gray-400'"
                     class="px-6 py-3 border-b-2 font-semibold transition">
                 Ratings
             </button>
             <button @click="activeTab = 'comments'"
-                    :class="activeTab === 'comments' ? 'border-emerald-500 text-emerald-500' : 'border-transparent text-gray-400'"
+                    :class="activeTab === 'comments' ? 'border-red-500 text-red-500' : 'border-transparent text-gray-400'"
                     class="px-6 py-3 border-b-2 font-semibold transition">
                 Comments
             </button>
@@ -65,7 +65,7 @@
                 <div class="flex items-start justify-between">
                     <div class="flex-1">
                         <a href="{% url 'movies:movie_detail' rating.movie.slug %}"
-                           class="text-xl font-semibold hover:text-emerald-500 transition">
+                           class="text-xl font-semibold hover:text-red-500 transition">
                             {{ rating.movie.title }}
                         </a>
                         <p class="text-gray-400 text-sm mt-1">{{ rating.movie.year }}</p>
@@ -97,7 +97,7 @@
             <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition">
                 <div class="flex items-start justify-between mb-3">
                     <a href="{% url 'movies:movie_detail' comment.movie.slug %}"
-                       class="text-xl font-semibold hover:text-emerald-500 transition">
+                       class="text-xl font-semibold hover:text-red-500 transition">
                         {{ comment.movie.title }}
                     </a>
                     <span class="text-sm text-gray-500">{{ comment.created_at|date:"M d, Y" }}</span>

@@ -7,7 +7,6 @@ from django.contrib.auth.views import (
     LoginView,
     LogoutView,
     PasswordResetView,
-    PasswordResetConfirmView
 )
 from django.views import View
 from django.contrib import messages
@@ -32,12 +31,7 @@ User = get_user_model()
 
 
 class UserRegistrationView(CreateView):
-    """
-    View for user registration.
-
-    Handles user registration and sends email verification
-    asynchronously using Celery.
-    """
+    """View for user registration."""
 
     model = User
     form_class = UserRegistrationForm
@@ -47,13 +41,12 @@ class UserRegistrationView(CreateView):
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Redirect authenticated users to home page."""
         if request.user.is_authenticated:
-            return redirect('home')
+            return redirect('accounts:home')
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form: UserRegistrationForm) -> HttpResponse:
         """Save user and send verification email."""
         user = form.save()
-
         send_verification_email.delay(user.id)
 
         messages.success(
@@ -73,11 +66,7 @@ class UserRegistrationView(CreateView):
 
 
 class UserLoginView(LoginView):
-    """
-    View for user login.
-
-    Supports login with username or email and 'remember me' functionality.
-    """
+    """View for user login."""
 
     form_class = UserLoginForm
     template_name = 'accounts/login.html'
@@ -90,7 +79,7 @@ class UserLoginView(LoginView):
         if not remember_me:
             self.request.session.set_expiry(0)
         else:
-            self.request.session.set_expiry(1209600) 
+            self.request.session.set_expiry(1209600)  # 2 weeks in seconds
 
         return super().form_valid(form)
 
@@ -105,6 +94,7 @@ class UserLoginView(LoginView):
 
 class UserLogoutView(LogoutView):
     """View for user logout."""
+
     next_page = reverse_lazy('accounts:login')
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
@@ -115,11 +105,7 @@ class UserLogoutView(LogoutView):
 
 
 class CustomPasswordResetView(PasswordResetView):
-    """
-    Custom password reset view.
-
-    Sends password reset email asynchronously using Celery.
-    """
+    """Sends password reset email asynchronously using Celery."""
 
     form_class = CustomPasswordResetForm
     template_name = 'accounts/password_reset.html'
@@ -132,6 +118,7 @@ class CustomPasswordResetView(PasswordResetView):
         email = form.cleaned_data['email']
         user = User.objects.get(email=email)
 
+        # Send password reset email asynchronously
         send_password_reset_email.delay(user.id)
 
         messages.success(
@@ -143,11 +130,7 @@ class CustomPasswordResetView(PasswordResetView):
 
 
 class CustomPasswordResetConfirmView(View):
-    """
-    Custom password reset confirm view.
-
-    Allows users to set a new password using the token from email.
-    """
+    """Custom password reset confirm view"""
 
     template_name = 'accounts/password_reset_confirm.html'
 
@@ -198,8 +181,10 @@ class CustomPasswordResetConfirmView(View):
             form = CustomSetPasswordForm(user=reset_token.user, data=request.POST)
 
             if form.is_valid():
+                # Save the new password
                 form.save()
 
+                # Mark token as used
                 reset_token.mark_as_used()
 
                 messages.success(
@@ -237,8 +222,8 @@ class UserProfileView(DetailView):
         context = super().get_context_data(**kwargs)
         user = self.object
 
-        #context['ratings_count'] = user.get_ratings_count()
-        #context['comments_count'] = user.get_comments_count()
+        # context['ratings_count'] = user.get_ratings_count()
+        # context['comments_count'] = user.get_comments_count()
 
         # Get recent ratings (will be implemented when ratings app is ready)
         # context['recent_ratings'] = user.ratings.select_related('movie')[:5]
@@ -283,6 +268,13 @@ def verify_email(request: HttpRequest, token: str) -> HttpResponse:
     View for email verification.
 
     Verifies user email using the token sent via email.
+
+    Args:
+        request: HTTP request object
+        token: Email verification token from URL
+
+    Returns:
+        HttpResponse redirecting to appropriate page
     """
     try:
         verification_token = EmailVerificationToken.objects.select_related('user').get(
@@ -297,11 +289,14 @@ def verify_email(request: HttpRequest, token: str) -> HttpResponse:
             )
             return redirect('accounts:resend_verification')
 
+        # Verify the user's email
         user = verification_token.user
         user.email_verified = True
         user.save(update_fields=['email_verified'])
 
+        # Mark token as used
         verification_token.mark_as_used()
+
         messages.success(
             request,
             _('Your email has been verified successfully! You can now login.')
@@ -319,12 +314,7 @@ def verify_email(request: HttpRequest, token: str) -> HttpResponse:
 
 @login_required
 def resend_verification_email(request: HttpRequest) -> HttpResponse:
-    """
-    View for resending verification email.
- 
-    Allows users to request a new verification email.
-
-    """
+    """View for resending verification email."""
     user = request.user
 
     if user.email_verified:
@@ -334,6 +324,7 @@ def resend_verification_email(request: HttpRequest) -> HttpResponse:
         )
         return redirect('accounts:profile', username=user.username)
 
+    # Send new verification email
     send_verification_email.delay(user.id)
 
     messages.success(
@@ -345,20 +336,12 @@ def resend_verification_email(request: HttpRequest) -> HttpResponse:
 
 
 def registration_complete(request: HttpRequest) -> HttpResponse:
-    """
-    View for registration complete page.
-
-    Shows a message after successful registration.
-    """
+    """View for registration complete page."""
     return render(request, 'accounts/registration_complete.html')
 
 
 def password_reset_done(request: HttpRequest) -> HttpResponse:
-    """
-    View for password reset done page.
-
-    Shows a message after password reset email has been sent.
-    """
+    """View for password reset done page."""
     return render(request, 'accounts/password_reset_done.html')
 
 

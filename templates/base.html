@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-{% load static %}
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -25,7 +23,7 @@
             transition: all 0.3s ease;
         }
         .category-btn.active {
-            background-color: #10b981;
+            background-color: #dc2626;
             color: white;
         }
         .star-rating {
@@ -53,27 +51,28 @@
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-8">
-                    <a href="{% url 'movies:home' %}" class="text-3xl font-bold text-emerald-500">Mvs-Movie</a>
+                    <a href="{% url 'movies:home' %}" class="text-3xl font-bold text-red-500">VideoHub</a>
                     <nav class="hidden md:flex space-x-6">
                         <a href="{% url 'movies:home' %}" class="hover:text-gray-300 transition">Home</a>
                         <a href="{% url 'movies:home' %}" class="hover:text-gray-300 transition">Movies</a>
-                        <a href="#" class="hover:text-gray-300 transition">Categories</a>
+                        <a href="{% url 'movies:search' %}" class="hover:text-gray-300 transition">Search</a>
                         {% if user.is_authenticated %}
-                        <a href="#" class="hover:text-gray-300 transition">My Ratings</a>
+                        <a href="{% url 'player:continue_watching' %}" class="hover:text-gray-300 transition">Continue Watching</a>
+                        <a href="{% url 'ratings:my_ratings' %}" class="hover:text-gray-300 transition">My Ratings</a>
                         {% endif %}
                     </nav>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <form method="get" action="#" class="hidden md:block">
+                    <form method="get" action="{% url 'movies:search' %}" class="hidden md:block">
                         <input type="text"
-                               name="q"
-                               placeholder="Search..."
-                               value="{{ request.GET.q }}"
-                               class="bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-2 focus:outline-none focus:border-emerald-500 transition">
+                              name="q"
+                              placeholder="Search..."
+                              value="{{ request.GET.q }}"
+                              class="bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-2 focus:outline-none focus:border-red-500 transition">
                     </form>
                     {% if user.is_authenticated %}
                     <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" class="bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded transition">
+                        <button @click="open = !open" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded transition">
                             {{ user.username }}
                         </button>
                         <div x-show="open"
@@ -82,7 +81,9 @@
                              class="absolute right-0 mt-2 w-48 bg-gray-900 rounded-lg shadow-lg py-2 border border-gray-700">
                             <a href="{% url 'accounts:profile' user.username %}" class="block px-4 py-2 hover:bg-gray-800 transition">Profile</a>
                             <a href="{% url 'accounts:settings' %}" class="block px-4 py-2 hover:bg-gray-800 transition">Settings</a>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-800 transition">My Ratings</a>
+                            <a href="{% url 'player:continue_watching' %}" class="block px-4 py-2 hover:bg-gray-800 transition">Continue Watching</a>
+                            <a href="{% url 'player:history' %}" class="block px-4 py-2 hover:bg-gray-800 transition">Watch History</a>
+                            <a href="{% url 'ratings:my_ratings' %}" class="block px-4 py-2 hover:bg-gray-800 transition">My Ratings</a>
                             <hr class="my-2 border-gray-700">
                             <form method="post" action="{% url 'accounts:logout' %}">
                                 {% csrf_token %}
@@ -96,7 +97,7 @@
                     <a href="{% url 'accounts:login' %}" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded transition">
                         Login
                     </a>
-                    <a href="{% url 'accounts:register' %}" class="bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded transition">
+                    <a href="{% url 'accounts:register' %}" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded transition">
                         Sign Up
                     </a>
                     {% endif %}
@@ -110,7 +111,7 @@
         {% if messages %}
         <div class="mb-6">
             {% for message in messages %}
-            <div class="bg-{% if message.tags == 'error' %}red{% elif message.tags == 'success' %}emerald{% elif message.tags == 'warning' %}yellow{% else %}blue{% endif %}-500 bg-opacity-20 border border-{% if message.tags == 'error' %}red{% elif message.tags == 'success' %}emerald{% elif message.tags == 'warning' %}yellow{% else %}blue{% endif %}-500 text-white px-4 py-3 rounded mb-3">
+            <div class="bg-{% if message.tags == 'error' %}red{% elif message.tags == 'success' %}red{% elif message.tags == 'warning' %}yellow{% else %}blue{% endif %}-500 bg-opacity-20 border border-{% if message.tags == 'error' %}red{% elif message.tags == 'success' %}red{% elif message.tags == 'warning' %}yellow{% else %}blue{% endif %}-500 text-white px-4 py-3 rounded mb-3">
                 {{ message }}
             </div>
             {% endfor %}
@@ -125,33 +126,31 @@
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                    <h3 class="text-xl font-bold text-emerald-500 mb-4">Mvs-Movie</h3>
+                    <h3 class="text-xl font-bold text-red-500 mb-4">Mvs-Movie</h3>
                     <p class="text-gray-400">Watch movies anytime, anywhere. Your favorite entertainment platform.</p>
                 </div>
                 <div>
                     <h4 class="font-semibold mb-4">Navigation</h4>
                     <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-emerald-500 transition">Home</a></li>
-                        <li><a href="#" class="hover:text-emerald-500 transition">Movies</a></li>
-                        <li><a href="#" class="hover:text-emerald-500 transition">Categories</a></li>
-                        <li><a href="#" class="hover:text-emerald-500 transition">New Releases</a></li>
+                        <li><a href="{% url 'movies:home' %}" class="hover:text-red-500 transition">Home</a></li>
+                        <li><a href="{% url 'movies:home' %}" class="hover:text-red-500 transition">Movies</a></li>
+                        <li><a href="{% url 'movies:search' %}" class="hover:text-red-500 transition">Search</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-semibold mb-4">Support</h4>
                     <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-emerald-500 transition">Help Center</a></li>
-                        <li><a href="#" class="hover:text-emerald-500 transition">FAQ</a></li>
-                        <li><a href="#" class="hover:text-emerald-500 transition">Contact</a></li>
-                        <li><a href="#" class="hover:text-emerald-500 transition">Subscription</a></li>
+                        <li><a href="#" class="hover:text-red-500 transition">Help Center</a></li>
+                        <li><a href="#" class="hover:text-red-500 transition">FAQ</a></li>
+                        <li><a href="#" class="hover:text-red-500 transition">Contact</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-semibold mb-4">Legal</h4>
                     <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-emerald-500 transition">Terms of Service</a></li>
-                        <li><a href="#" class="hover:text-emerald-500 transition">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-emerald-500 transition">Cookie Policy</a></li>
+                        <li><a href="#" class="hover:text-red-500 transition">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-red-500 transition">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-red-500 transition">Cookie Policy</a></li>
                     </ul>
                 </div>
             </div>
