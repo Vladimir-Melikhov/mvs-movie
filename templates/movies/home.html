@@ -53,7 +53,7 @@
     </h2>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {% for movie in movies %}
-        <a href="#" class="movie-card cursor-pointer">
+        <a href="{% url 'movies:movie_detail' movie.slug %}" class="movie-card cursor-pointer">
             <div class="relative rounded-lg overflow-hidden bg-gray-900">
                 {% if movie.poster %}
                 <img src="{{ movie.poster.url }}"

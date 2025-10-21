@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.movies',
     'apps.ratings',
+    'apps.player',
 
 ]
 
