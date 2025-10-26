@@ -6,9 +6,7 @@ from typing import Any, Dict, Optional
 def success_response(
     data: Any = None, message: str = "Success", status_code: int = status.HTTP_200_OK
 ) -> Response:
-    """
-    Return a standardized success response.
-    """
+    """Return a standardized success response."""
     return Response(
         {"success": True, "data": data, "message": message, "errors": None},
         status=status_code,
@@ -20,9 +18,7 @@ def error_response(
     errors: Optional[Dict] = None,
     status_code: int = status.HTTP_400_BAD_REQUEST,
 ) -> Response:
-    """
-    Return a standardized error response.
-    """
+    """Return a standardized error response."""
     return Response(
         {"success": False, "data": None, "message": message, "errors": errors or {}},
         status=status_code,
