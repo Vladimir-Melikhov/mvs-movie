@@ -1,18 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Mvs-Movie - Home{% endblock %}
-
 {% block content %}
 <section class="mb-12">
     <div class="relative h-96 rounded-lg overflow-hidden">
-        <img "{% static 'images/banner1.jpg' %}"
-             alt=" "
+        <img src="{% static "images/banner1.jpg" %}"
+             alt="Featured Movie"
              class="w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent">
             <div class="absolute bottom-12 left-12 max-w-xl">
-                <h2 class="text-5xl font-bold mb-4">Featured Movie</h2>
+                <h2 class="text-5xl font-bold mb-4">Best Movies</h2>
                 <p class="text-lg mb-6 text-gray-300">
-                    Discover the best movies and series. Watch unlimited entertainment anytime.
+                    Only on Mvs-Movie.
                 </p>
                 <div class="flex space-x-4">
                     <button class="bg-red-500 text-white px-8 py-3 rounded font-semibold hover:bg-red-600 transition flex items-center">
@@ -34,12 +33,12 @@
 <section class="mb-8">
     <div class="flex flex-wrap gap-3">
         <a href="#"
-           class="category-btn px-6 py-2 rounded-full border border-gray-700 hover:border-emerald-500 transition {% if not selected_category %}active{% endif %}">
+           class="category-btn px-6 py-2 rounded-full border border-gray-700 hover:border-red-500 transition {% if not selected_category %}active{% endif %}">
             All
         </a>
         {% for category in categories %}
         <a href="?category={{ category.slug }}"
-           class="category-btn px-6 py-2 rounded-full border border-gray-700 hover:border-emerald-500 transition {% if selected_category.slug == category.slug %}active{% endif %}">
+           class="category-btn px-6 py-2 rounded-full border border-gray-700 hover:border-red-500 transition {% if selected_category.slug == category.slug %}active{% endif %}">
             {{ category.name }}
         </a>
         {% endfor %}
@@ -65,7 +64,7 @@
                      class="w-full h-72 object-cover">
                 {% endif %}
                 <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-70 transition flex items-center justify-center opacity-0 hover:opacity-100">
-                    <button class="bg-emerald-500 p-4 rounded-full hover:scale-110 hover:bg-emerald-600 transition">
+                    <button class="bg-red-500 p-4 rounded-full hover:scale-110 hover:bg-red-600 transition">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
                         </svg>
@@ -103,7 +102,7 @@
 
         {% for num in page_obj.paginator.page_range %}
         {% if page_obj.number == num %}
-        <span class="px-4 py-2 bg-emerald-500 rounded">{{ num }}</span>
+        <span class="px-4 py-2 bg-red-500 rounded">{{ num }}</span>
         {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
         <a href="?page={{ num }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}"
            class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition">

@@ -8,6 +8,7 @@ from django.contrib.auth.views import (
     LogoutView,
     PasswordResetView,
 )
+from django.contrib.auth.forms import PasswordChangeForm
 from django.views import View
 from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
@@ -31,7 +32,12 @@ User = get_user_model()
 
 
 class UserRegistrationView(CreateView):
-    """View for user registration."""
+    """
+    View for user registration.
+
+    Handles user registration and sends email verification
+    asynchronously using Celery.
+    """
 
     model = User
     form_class = UserRegistrationForm
@@ -47,6 +53,8 @@ class UserRegistrationView(CreateView):
     def form_valid(self, form: UserRegistrationForm) -> HttpResponse:
         """Save user and send verification email."""
         user = form.save()
+
+        # Send verification email asynchronously
         send_verification_email.delay(user.id)
 
         messages.success(
@@ -66,7 +74,11 @@ class UserRegistrationView(CreateView):
 
 
 class UserLoginView(LoginView):
-    """View for user login."""
+    """
+    View for user login.
+
+    Supports login with username or email and 'remember me' functionality.
+    """
 
     form_class = UserLoginForm
     template_name = 'accounts/login.html'
@@ -77,8 +89,10 @@ class UserLoginView(LoginView):
         remember_me = form.cleaned_data.get('remember_me')
 
         if not remember_me:
+            # Set session to expire when browser closes
             self.request.session.set_expiry(0)
         else:
+            # Set session to expire in 2 weeks
             self.request.session.set_expiry(1209600)  # 2 weeks in seconds
 
         return super().form_valid(form)
@@ -105,7 +119,11 @@ class UserLogoutView(LogoutView):
 
 
 class CustomPasswordResetView(PasswordResetView):
-    """Sends password reset email asynchronously using Celery."""
+    """
+    Custom password reset view.
+
+    Sends password reset email asynchronously using Celery.
+    """
 
     form_class = CustomPasswordResetForm
     template_name = 'accounts/password_reset.html'
@@ -130,7 +148,11 @@ class CustomPasswordResetView(PasswordResetView):
 
 
 class CustomPasswordResetConfirmView(View):
-    """Custom password reset confirm view"""
+    """
+    Custom password reset confirm view.
+
+    Allows users to set a new password using the token from email.
+    """
 
     template_name = 'accounts/password_reset_confirm.html'
 
@@ -209,7 +231,11 @@ class CustomPasswordResetConfirmView(View):
 
 
 class UserProfileView(DetailView):
-    """View for displaying user profile."""
+    """
+    View for displaying user profile.
+
+    Shows public profile information including statistics.
+    """
 
     model = User
     template_name = 'accounts/profile.html'
@@ -222,17 +248,20 @@ class UserProfileView(DetailView):
         context = super().get_context_data(**kwargs)
         user = self.object
 
-        # context['ratings_count'] = user.get_ratings_count()
-        # context['comments_count'] = user.get_comments_count()
-
-        # Get recent ratings (will be implemented when ratings app is ready)
-        # context['recent_ratings'] = user.ratings.select_related('movie')[:5]
+        # Add ratings and comments
+        from apps.ratings.models import Rating, Comment
+        context['ratings'] = Rating.objects.filter(user=user).select_related('movie')[:5]
+        context['comments'] = Comment.objects.filter(user=user).select_related('movie')[:5]
 
         return context
 
 
 class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
-    """View for updating user profile."""
+    """
+    View for updating user profile.
+
+    Allows users to update their profile information and password.
+    """
 
     model = User
     form_class = UserProfileUpdateForm
@@ -245,6 +274,44 @@ class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self) -> str:
         """Redirect to user's profile after successful update."""
         return reverse_lazy('accounts:profile', kwargs={'username': self.request.user.username})
+
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """Handle POST request for both profile and password forms."""
+        self.object = self.get_object()
+        form_type = request.POST.get('form_type')
+
+        if form_type == 'password':
+            # Handle password change
+            password_form = PasswordChangeForm(user=request.user, data=request.POST)
+
+            if password_form.is_valid():
+                password_form.save()
+                # Update session to prevent logout
+                from django.contrib.auth import update_session_auth_hash
+                update_session_auth_hash(request, password_form.user)
+                messages.success(request, _('Your password has been changed successfully.'))
+                return redirect(self.get_success_url())
+            else:
+                messages.error(request, _('Please correct the errors in the password form.'))
+                profile_form = self.form_class(instance=self.object)
+                return self.render_to_response(self.get_context_data(
+                    form=profile_form,
+                    password_form=password_form
+                ))
+        else:
+            # Handle profile update with files
+            form = self.form_class(request.POST, request.FILES, instance=self.object)
+            if form.is_valid():
+                return self.form_valid(form)
+            else:
+                return self.form_invalid(form)
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        """Add password form to context."""
+        context = super().get_context_data(**kwargs)
+        if 'password_form' not in context:
+            context['password_form'] = PasswordChangeForm(user=self.request.user)
+        return context
 
     def form_valid(self, form: UserProfileUpdateForm) -> HttpResponse:
         """Handle successful profile update."""
@@ -314,7 +381,17 @@ def verify_email(request: HttpRequest, token: str) -> HttpResponse:
 
 @login_required
 def resend_verification_email(request: HttpRequest) -> HttpResponse:
-    """View for resending verification email."""
+    """
+    View for resending verification email.
+
+    Allows users to request a new verification email.
+
+    Args:
+        request: HTTP request object
+
+    Returns:
+        HttpResponse with appropriate message
+    """
     user = request.user
 
     if user.email_verified:
@@ -336,15 +413,27 @@ def resend_verification_email(request: HttpRequest) -> HttpResponse:
 
 
 def registration_complete(request: HttpRequest) -> HttpResponse:
-    """View for registration complete page."""
+    """
+    View for registration complete page.
+
+    Shows a message after successful registration.
+    """
     return render(request, 'accounts/registration_complete.html')
 
 
 def password_reset_done(request: HttpRequest) -> HttpResponse:
-    """View for password reset done page."""
+    """
+    View for password reset done page.
+
+    Shows a message after password reset email has been sent.
+    """
     return render(request, 'accounts/password_reset_done.html')
 
 
 def password_reset_complete(request: HttpRequest) -> HttpResponse:
-    """View for password reset complete page."""
+    """
+    View for password reset complete page.
+
+    Shows a message after password has been reset successfully.
+    """
     return render(request, 'accounts/password_reset_complete.html')

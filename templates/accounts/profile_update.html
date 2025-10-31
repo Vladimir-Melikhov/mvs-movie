@@ -7,11 +7,12 @@
     <h1 class="text-3xl font-bold mb-8">Account Settings</h1>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Sidebar -->
         <div class="lg:col-span-1">
             <div class="bg-gray-900 rounded-lg border border-gray-800 p-4">
                 <nav class="space-y-2">
                     <a href="#profile"
-                       class="block px-4 py-2 rounded hover:bg-gray-800 transition text-red-500">
+                       class="block px-4 py-2 rounded hover:bg-gray-800 transition text-emerald-500">
                         Profile Information
                     </a>
                     <a href="#password"
@@ -31,7 +32,7 @@
             <!-- Profile Information -->
             <div id="profile" class="bg-gray-900 rounded-lg shadow-xl p-8 border border-gray-800">
                 <h2 class="text-2xl font-bold mb-6">Profile Information</h2>
-                <form method="post" action="{% url 'accounts:settings' %}" class="space-y-6">
+                <form method="post" action="{% url 'accounts:settings' %}" enctype="multipart/form-data" class="space-y-6">
                     {% csrf_token %}
                     <input type="hidden" name="form_type" value="profile">
 
@@ -57,33 +58,53 @@
                                id="email"
                                value="{{ user.email }}"
                                class="w-full bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-emerald-500 transition"
-                               required>
+                               readonly>
+                        <p class="mt-1 text-xs text-gray-500">Email cannot be changed</p>
                     </div>
 
                     <div>
-                        <label for="first_name" class="block text-sm font-medium mb-2">
+                        <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium mb-2">
                             First Name (Optional)
                         </label>
                         <input type="text"
-                               name="first_name"
-                               id="first_name"
-                               value="{{ user.first_name }}"
+                               name="{{ form.first_name.name }}"
+                               id="{{ form.first_name.id_for_label }}"
+                               value="{{ form.first_name.value|default:'' }}"
                                class="w-full bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-emerald-500 transition">
+                        {% if form.first_name.errors %}
+                        <p class="mt-1 text-sm text-red-400">{{ form.first_name.errors.0 }}</p>
+                        {% endif %}
                     </div>
 
                     <div>
-                        <label for="last_name" class="block text-sm font-medium mb-2">
+                        <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium mb-2">
                             Last Name (Optional)
                         </label>
                         <input type="text"
-                               name="last_name"
-                               id="last_name"
-                               value="{{ user.last_name }}"
+                               name="{{ form.last_name.name }}"
+                               id="{{ form.last_name.id_for_label }}"
+                               value="{{ form.last_name.value|default:'' }}"
                                class="w-full bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-emerald-500 transition">
+                        {% if form.last_name.errors %}
+                        <p class="mt-1 text-sm text-red-400">{{ form.last_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.bio.id_for_label }}" class="block text-sm font-medium mb-2">
+                            Bio (Optional)
+                        </label>
+                        <textarea name="{{ form.bio.name }}"
+                                  id="{{ form.bio.id_for_label }}"
+                                  rows="4"
+                                  class="w-full bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-emerald-500 transition">{{ form.bio.value|default:'' }}</textarea>
+                        {% if form.bio.errors %}
+                        <p class="mt-1 text-sm text-red-400">{{ form.bio.errors.0 }}</p>
+                        {% endif %}
                     </div>
 
                     <button type="submit"
-                            class="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded transition">
+                            class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-3 rounded transition">
                         Save Changes
                     </button>
                 </form>
@@ -97,40 +118,52 @@
                     <input type="hidden" name="form_type" value="password">
 
                     <div>
-                        <label for="old_password" class="block text-sm font-medium mb-2">
+                        <label for="{{ password_form.old_password.id_for_label }}" class="block text-sm font-medium mb-2">
                             Current Password
                         </label>
                         <input type="password"
-                               name="old_password"
-                               id="old_password"
+                               name="{{ password_form.old_password.name }}"
+                               id="{{ password_form.old_password.id_for_label }}"
                                class="w-full bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-emerald-500 transition"
                                required>
+                        {% if password_form.old_password.errors %}
+                        <p class="mt-1 text-sm text-red-400">{{ password_form.old_password.errors.0 }}</p>
+                        {% endif %}
                     </div>
 
                     <div>
-                        <label for="new_password1" class="block text-sm font-medium mb-2">
+                        <label for="{{ password_form.new_password1.id_for_label }}" class="block text-sm font-medium mb-2">
                             New Password
                         </label>
                         <input type="password"
-                               name="new_password1"
-                               id="new_password1"
+                               name="{{ password_form.new_password1.name }}"
+                               id="{{ password_form.new_password1.id_for_label }}"
                                class="w-full bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-emerald-500 transition"
                                required>
+                        {% if password_form.new_password1.errors %}
+                        <p class="mt-1 text-sm text-red-400">{{ password_form.new_password1.errors.0 }}</p>
+                        {% endif %}
+                        {% if password_form.new_password1.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ password_form.new_password1.help_text }}</p>
+                        {% endif %}
                     </div>
 
                     <div>
-                        <label for="new_password2" class="block text-sm font-medium mb-2">
+                        <label for="{{ password_form.new_password2.id_for_label }}" class="block text-sm font-medium mb-2">
                             Confirm New Password
                         </label>
                         <input type="password"
-                               name="new_password2"
-                               id="new_password2"
+                               name="{{ password_form.new_password2.name }}"
+                               id="{{ password_form.new_password2.id_for_label }}"
                                class="w-full bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-emerald-500 transition"
                                required>
+                        {% if password_form.new_password2.errors %}
+                        <p class="mt-1 text-sm text-red-400">{{ password_form.new_password2.errors.0 }}</p>
+                        {% endif %}
                     </div>
 
                     <button type="submit"
-                            class="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded transition">
+                            class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-3 rounded transition">
                         Change Password
                     </button>
                 </form>
@@ -139,15 +172,56 @@
             <!-- Avatar Upload -->
             <div id="avatar" class="bg-gray-900 rounded-lg shadow-xl p-8 border border-gray-800">
                 <h2 class="text-2xl font-bold mb-6">Avatar</h2>
-                <div class="flex items-center space-x-6 mb-6">
-                    <div class="w-24 h-24 bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center text-4xl font-bold">
-                        {{ user.username|first|upper }}
+                <form method="post" action="{% url 'accounts:settings' %}" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="profile">
+
+                    <div class="flex items-start space-x-6">
+                        <div class="flex-shrink-0">
+                            {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}"
+                                 alt="{{ user.username }}"
+                                 class="w-32 h-32 rounded-full object-cover border-4 border-emerald-500">
+                            {% else %}
+                            <div class="w-32 h-32 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-full flex items-center justify-center text-5xl font-bold border-4 border-emerald-500">
+                                {{ user.username|first|upper }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="flex-1">
+                            <label for="{{ form.avatar.id_for_label }}" class="block text-sm font-medium mb-2">
+                                Upload New Avatar
+                            </label>
+                            <input type="file"
+                                   name="{{ form.avatar.name }}"
+                                   id="{{ form.avatar.id_for_label }}"
+                                   accept="image/*"
+                                   class="w-full bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-emerald-500 transition file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-emerald-500 file:text-white hover:file:bg-emerald-600">
+                            {% if form.avatar.errors %}
+                            <p class="mt-1 text-sm text-red-400">{{ form.avatar.errors.0 }}</p>
+                            {% endif %}
+                            <p class="mt-2 text-xs text-gray-500">
+                                Allowed formats: JPG, JPEG, PNG, GIF, WEBP<br>
+                                Maximum file size: 5MB
+                            </p>
+
+                            {% if user.avatar %}
+                            <div class="mt-4">
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="avatar-clear" id="avatar-clear" class="w-4 h-4 text-emerald-500 bg-gray-900 border-gray-700 rounded focus:ring-emerald-500">
+                                    <span class="text-sm text-gray-400">Remove current avatar</span>
+                                </label>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-gray-400 mb-2">Avatar support coming soon!</p>
-                        <p class="text-sm text-gray-500">Currently showing default avatar based on username</p>
-                    </div>
-                </div>
+
+                    <button type="submit"
+                            class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-3 rounded transition">
+                        Update Avatar
+                    </button>
+                </form>
             </div>
         </div>
     </div>

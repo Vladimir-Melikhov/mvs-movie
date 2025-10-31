@@ -114,7 +114,7 @@
             </svg>
             <p class="text-gray-400 text-xl mb-4">No movies found in this category</p>
             <a href="{% url 'movies:home' %}"
-               class="inline-block bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded transition">
+               class="inline-block bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded transition">
                 Browse All Movies
             </a>
         </div>
@@ -137,7 +137,7 @@
 
         {% for num in page_obj.paginator.page_range %}
         {% if page_obj.number == num %}
-        <span class="px-4 py-2 bg-emerald-500 rounded font-semibold">{{ num }}</span>
+        <span class="px-4 py-2 bg-red-500 rounded font-semibold">{{ num }}</span>
         {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
         <a href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
            class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition">
