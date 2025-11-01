@@ -1,9 +1,3 @@
-# config/celery.py
-
-"""
-Celery configuration for VideoHub project.
-"""
-
 import os
 from celery import Celery
 from celery.schedules import crontab
@@ -16,7 +10,6 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.autodiscover_tasks()
 
-# Periodic tasks schedule
 app.conf.beat_schedule = {
     'deactivate-expired-subscriptions': {
         'task': 'apps.subscribe.tasks.deactivate_expired_subscriptions',

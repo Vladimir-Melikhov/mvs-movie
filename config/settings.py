@@ -1,9 +1,3 @@
-# config/settings.py
-
-"""
-Django settings for VideoHub project.
-"""
-
 from pathlib import Path
 from decouple import config
 
