@@ -1,0 +1,354 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile_user.username }} - Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Profile Header -->
+    <div class="bg-gray-900 rounded-lg shadow-xl p-8 border border-gray-800 mb-8">
+        <div class="flex items-center space-x-6">
+            {% if profile_user.avatar %}
+            <img src="{{ profile_user.avatar.url }}"
+                 alt="{{ profile_user.username }}"
+                 class="w-24 h-24 rounded-full object-cover border-4 border-red-500">
+            {% else %}
+            <div class="w-24 h-24 bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center text-4xl font-bold border-4 border-red-500">
+                {{ profile_user.username|first|upper }}
+            </div>
+            {% endif %}
+            <div class="flex-1">
+                <h1 class="text-3xl font-bold mb-2">{{ profile_user.username }}</h1>
+
+                <!-- Subscription Status -->
+                {% if user == profile_user %}
+                <div class="mb-3" x-data="{ showSubscriptionModal: false }">
+                    {% if profile_user.subscription %}
+                        {% if profile_user.subscription.is_active and not profile_user.subscription.is_expired %}
+                        <div class="inline-flex items-center bg-red-500 bg-opacity-20 border border-red-500 text-red-500 px-4 py-2 rounded font-semibold">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            Premium Subscriber ({{ profile_user.subscription.days_remaining }} days left)
+                        </div>
+                        {% else %}
+                        <button @click="showSubscriptionModal = true"
+                                class="inline-flex items-center bg-gray-700 bg-opacity-50 border border-gray-600 text-gray-400 px-4 py-2 rounded font-semibold hover:bg-gray-600 hover:border-gray-500 hover:text-white transition cursor-pointer">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                            Free Account (1 hour/day limit)
+                        </button>
+                        {% endif %}
+                    {% else %}
+                    <button @click="showSubscriptionModal = true"
+                            class="inline-flex items-center bg-gray-700 bg-opacity-50 border border-gray-600 text-gray-400 px-4 py-2 rounded font-semibold hover:bg-gray-600 hover:border-gray-500 hover:text-white transition cursor-pointer">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                        Free Account (1 hour/day limit)
+                    </button>
+                    {% endif %}
+
+                    <!-- Subscription Modal -->
+                    <div x-show="showSubscriptionModal"
+                         x-cloak
+                         @click.away="showSubscriptionModal = false"
+                         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75"
+                         style="display: none;">
+                        <div @click.stop
+                             x-show="showSubscriptionModal"
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 transform scale-90"
+                             x-transition:enter-end="opacity-100 transform scale-100"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100 transform scale-100"
+                             x-transition:leave-end="opacity-0 transform scale-90"
+                             class="bg-gray-900 rounded-lg shadow-2xl border border-gray-800 max-w-md w-full overflow-hidden">
+
+                            <!-- Modal Header -->
+                            <div class="bg-gradient-to-r from-red-900 to-red-700 p-6 relative">
+                                <button @click="showSubscriptionModal = false"
+                                        class="absolute top-4 right-4 text-white hover:text-gray-300 transition">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                                <div class="flex items-center space-x-3">
+                                    <div class="bg-white bg-opacity-20 p-3 rounded-full">
+                                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-2xl font-bold text-white">Premium Subscription</h3>
+                                        <p class="text-red-200 text-sm">Unlimited Entertainment</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal Body -->
+                            <div class="p-6">
+                                <!-- Price -->
+                                <div class="text-center mb-6 pb-6 border-b border-gray-800">
+                                    <div class="flex items-end justify-center space-x-2">
+                                        <span class="text-5xl font-bold text-red-500">$12</span>
+                                        <span class="text-gray-400 text-lg mb-2">/month</span>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mt-2">30 days of unlimited access</p>
+                                </div>
+
+                                <!-- Features -->
+                                <div class="space-y-4 mb-6">
+                                    <div class="flex items-start space-x-3">
+                                        <svg class="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <div>
+                                            <h4 class="font-semibold text-white">Unlimited Watching</h4>
+                                            <p class="text-gray-400 text-sm">Watch as many movies as you want, no daily limits</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <svg class="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <div>
+                                            <h4 class="font-semibold text-white">HD Quality</h4>
+                                            <p class="text-gray-400 text-sm">Stream in high definition quality</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <svg class="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <div>
+                                            <h4 class="font-semibold text-white">Ad-Free Experience</h4>
+                                            <p class="text-gray-400 text-sm">Enjoy movies without interruptions</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <svg class="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <div>
+                                            <h4 class="font-semibold text-white">Cancel Anytime</h4>
+                                            <p class="text-gray-400 text-sm">No commitment, cancel whenever you want</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- CTA Button -->
+                                <form method="post" action="{% url 'payment:create_checkout_session' %}" class="w-full">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="subscription_months" value="1">
+                                    <button type="submit"
+                                            class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-4 rounded-lg transition transform hover:scale-105 shadow-lg">
+                                        Subscribe Now - $12/month
+                                    </button>
+                                </form>
+
+                                <p class="text-center text-gray-500 text-xs mt-4">
+                                    Secure payment • Cancel anytime • 30-day subscription
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if profile_user.bio %}
+                <p class="text-gray-400 mb-2">{{ profile_user.bio }}</p>
+                {% endif %}
+                <p class="text-gray-400 text-sm">
+                    Member since {{ profile_user.date_joined|date:"F Y" }}
+                </p>
+                {% if user == profile_user %}
+                <div class="mt-4">
+                    <a href="{% url 'accounts:settings' %}"
+                       class="inline-block bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded transition">
+                        Edit Profile
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-gray-800">
+            <div class="text-center">
+                <p class="text-3xl font-bold text-red-500">{{ profile_user.ratings.count }}</p>
+                <p class="text-gray-400 mt-1">Ratings</p>
+            </div>
+            <div class="text-center">
+                <p class="text-3xl font-bold text-red-500">{{ profile_user.comments.count }}</p>
+                <p class="text-gray-400 mt-1">Comments</p>
+            </div>
+            <div class="text-center">
+                <p class="text-3xl font-bold text-red-500">{{ profile_user.watch_history.count }}</p>
+                <p class="text-gray-400 mt-1">Watched</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div x-data="{ activeTab: 'ratings' }" class="mb-8">
+        <div class="flex space-x-4 border-b border-gray-800 mb-6">
+            <button @click="activeTab = 'ratings'"
+                    :class="activeTab === 'ratings' ? 'border-red-500 text-red-500' : 'border-transparent text-gray-400'"
+                    class="px-6 py-3 border-b-2 font-semibold transition">
+                Ratings ({{ profile_user.ratings.count }})
+            </button>
+            <button @click="activeTab = 'comments'"
+                    :class="activeTab === 'comments' ? 'border-red-500 text-red-500' : 'border-transparent text-gray-400'"
+                    class="px-6 py-3 border-b-2 font-semibold transition">
+                Comments ({{ profile_user.comments.count }})
+            </button>
+        </div>
+
+        <!-- Ratings Tab -->
+        <div x-show="activeTab === 'ratings'" class="space-y-4">
+            {% for rating in ratings %}
+            <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <a href="{% url 'movies:movie_detail' rating.movie.slug %}"
+                           class="text-xl font-semibold hover:text-red-500 transition">
+                            {{ rating.movie.title }}
+                        </a>
+                        <p class="text-gray-400 text-sm mt-1">{{ rating.movie.year }} • {{ rating.movie.category.name }}</p>
+                        <div class="flex items-center mt-3">
+                            <div class="flex space-x-1">
+                                {% for i in "0123456789" %}
+                                <svg class="w-5 h-5 {% if forloop.counter <= rating.score %}text-yellow-400{% else %}text-gray-600{% endif %}"
+                                     fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                                {% endfor %}
+                            </div>
+                            <span class="ml-2 text-gray-400 text-lg font-semibold">{{ rating.score }}/10</span>
+                        </div>
+                    </div>
+                    <span class="text-sm text-gray-500">{{ rating.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-12 bg-gray-900 rounded-lg border border-gray-800">
+                <p class="text-gray-400">No ratings yet</p>
+            </div>
+            {% endfor %}
+
+            {% if profile_user.ratings.count > 5 %}
+            <div class="text-center mt-6">
+                <a href="{% url 'ratings:my_ratings' %}"
+                   class="inline-block text-red-500 hover:text-red-400 font-semibold transition">
+                    View all ratings →
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Comments Tab -->
+        <div x-show="activeTab === 'comments'" class="space-y-4">
+            {% for comment in comments %}
+            <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition">
+                <div class="flex items-start justify-between mb-3">
+                    <a href="{% url 'movies:movie_detail' comment.movie.slug %}"
+                       class="text-xl font-semibold hover:text-red-500 transition">
+                        {{ comment.movie.title }}
+                    </a>
+                    <span class="text-sm text-gray-500">{{ comment.created_at|date:"M d, Y" }}</span>
+                </div>
+                <p class="text-gray-300">{{ comment.text }}</p>
+                {% if comment.updated_at != comment.created_at %}
+                <p class="text-xs text-gray-500 mt-2">Edited on {{ comment.updated_at|date:"M d, Y" }}</p>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="text-center py-12 bg-gray-900 rounded-lg border border-gray-800">
+                <p class="text-gray-400">No comments yet</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+[x-cloak] {
+    display: none !important;
+}
+
+/* Subscription Modal Styles */
+
+/* Hide elements with x-cloak until Alpine.js is ready */
+[x-cloak] {
+    display: none !important;
+}
+
+/* Subscription button hover effects */
+.subscription-btn {
+    transition: all 0.3s ease;
+}
+
+.subscription-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Modal overlay animation */
+.modal-overlay {
+    backdrop-filter: blur(4px);
+}
+
+/* Premium badge pulse animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.premium-badge {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Feature check icon bounce */
+.feature-check {
+    animation: bounce 1s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Subscription CTA button gradient animation */
+.subscribe-btn {
+    background-size: 200% 100%;
+    transition: background-position 0.5s ease, transform 0.3s ease;
+}
+
+.subscribe-btn:hover {
+    background-position: 100% 0;
+}
+
+/* Price emphasis */
+.price-tag {
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+/* Modal close button */
+.modal-close:hover {
+    transform: rotate(90deg);
+    transition: transform 0.3s ease;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Canceled - VideoHub{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto mt-12">
+    <div class="bg-gray-900 rounded-lg shadow-xl p-8 border border-gray-800">
+        <div class="text-center">
+            <!-- Info Icon -->
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-yellow-500 bg-opacity-20 rounded-full mb-6">
+                <svg class="w-12 h-12 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+
+            <!-- Message -->
+            <h1 class="text-4xl font-bold mb-4">Payment Canceled</h1>
+            <p class="text-xl text-gray-300 mb-8">
+                Your payment was not completed. No charges have been made.
+            </p>
+
+            <!-- Info Box -->
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg p-6 mb-8">
+                <p class="text-gray-300 mb-4">
+                    Don't worry! You can try again anytime or continue using VideoHub with the free plan.
+                </p>
+                <ul class="text-left space-y-2 text-gray-400 text-sm">
+                    <li>• No payment has been processed</li>
+                    <li>• Your account remains unchanged</li>
+                    <li>• You can subscribe anytime</li>
+                </ul>
+            </div>
+
+            <!-- Why Subscribe Section -->
+            <div class="bg-gradient-to-r from-red-900 to-gray-900 rounded-lg p-6 mb-8 text-left">
+                <h3 class="text-xl font-semibold text-red-500 mb-4 text-center">
+                    Why Subscribe to Premium?
+                </h3>
+                <ul class="space-y-3 text-gray-300">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span><strong>Unlimited Watching</strong> - No daily limits, watch as much as you want</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span><strong>Just $12/month</strong> - Less than the cost of two movie tickets</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span><strong>Cancel Anytime</strong> - No long-term commitment required</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'accounts:profile' user.username %}"
+                   class="bg-red-500 hover:bg-red-600 text-white font-semibold px-8 py-3 rounded-lg transition inline-flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    Try Again - Subscribe Now
+                </a>
+                <a href="{% url 'movies:home' %}"
+                   class="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-8 py-3 rounded-lg transition inline-flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                    </svg>
+                    Browse Movies
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

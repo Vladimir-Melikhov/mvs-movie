@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Successful - VideoHub{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto mt-12">
+    <div class="bg-gray-900 rounded-lg shadow-xl p-8 border border-gray-800">
+        <div class="text-center">
+            <!-- Success Icon -->
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-red-500 bg-opacity-20 rounded-full mb-6">
+                <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+
+            <!-- Success Message -->
+            <h1 class="text-4xl font-bold mb-4 text-red-500">Payment Successful!</h1>
+            <p class="text-xl text-gray-300 mb-6">
+                Thank you for subscribing to VideoHub Premium
+            </p>
+
+            <!-- Info Box -->
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg p-6 mb-8">
+                <div class="flex items-center justify-center space-x-2 mb-4">
+                    <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <h3 class="text-xl font-semibold text-white">Your Premium Benefits:</h3>
+                </div>
+
+                <ul class="text-left space-y-3 text-gray-300">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span><strong>Unlimited Watching</strong> - Watch as many movies as you want with no daily limits</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span><strong>HD Quality</strong> - Stream in high definition quality</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span><strong>Ad-Free Experience</strong> - Enjoy movies without interruptions</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Confirmation Note -->
+            <div class="bg-blue-500 bg-opacity-20 border border-blue-500 rounded-lg p-4 mb-8">
+                <p class="text-sm text-blue-200">
+                    <strong>📧 Confirmation Email:</strong> A confirmation email with your subscription details has been sent to your email address.
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'movies:home' %}"
+                   class="bg-red-500 hover:bg-red-600 text-white font-semibold px-8 py-3 rounded-lg transition inline-flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+                    </svg>
+                    Start Watching Movies
+                </a>
+                <a href="{% url 'accounts:profile' user.username %}"
+                   class="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-8 py-3 rounded-lg transition inline-flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                    </svg>
+                    View Profile
+                </a>
+            </div>
+
+            <!-- Session ID (for debugging) -->
+            {% if session_id %}
+            <p class="text-xs text-gray-500 mt-8">
+                Session ID: {{ session_id }}
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
