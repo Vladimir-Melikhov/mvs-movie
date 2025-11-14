@@ -1,51 +1,65 @@
 {% extends 'base.html' %}
 
-{% block title %}Sign Up - VideoHub{% endblock %}
+{% block title %}Sign Up - Mvs-Movie{% endblock %}
 
 {% block content %}
 <div class="max-w-md mx-auto mt-12">
-    <div class="bg-gray-900 rounded-lg shadow-xl p-8 border border-gray-800">
-        <h2 class="text-3xl font-bold text-center mb-8 text-red-500">Create Account</h2>
+    <div class="vintage-card rounded-lg shadow-2xl p-8 relative overflow-hidden">
+        <!-- Decorative corners -->
+        <div class="absolute top-2 left-2 w-12 h-12 border-t-2 border-l-2 border-amber-400 opacity-50"></div>
+        <div class="absolute top-2 right-2 w-12 h-12 border-t-2 border-r-2 border-amber-400 opacity-50"></div>
+        <div class="absolute bottom-2 left-2 w-12 h-12 border-b-2 border-l-2 border-amber-400 opacity-50"></div>
+        <div class="absolute bottom-2 right-2 w-12 h-12 border-b-2 border-r-2 border-amber-400 opacity-50"></div>
+        
+        <div class="text-center mb-8">
+            <div class="inline-block mb-4 p-4 bg-amber-900/20 rounded-full">
+                <svg class="w-12 h-12 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                </svg>
+            </div>
+            <h2 class="ornate-title text-3xl mb-2">Join the Club</h2>
+            <p class="text-amber-200/70 font-serif italic">Become a member of our cinema lounge</p>
+        </div>
 
         <form method="post" action="{% url 'accounts:register' %}" class="space-y-6">
             {% csrf_token %}
 
             {% if form.non_field_errors %}
-            <div class="bg-red-500 bg-opacity-20 border border-red-500 text-white px-4 py-3 rounded">
+            <div class="bg-red-900/30 border border-red-400/50 text-red-200 px-4 py-3 rounded">
                 {% for error in form.non_field_errors %}
-                <p>{{ error }}</p>
+                <p class="font-serif">{{ error }}</p>
                 {% endfor %}
             </div>
             {% endif %}
 
             <div>
-                <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium mb-2">
+                <label for="{{ form.username.id_for_label }}" class="block text-sm font-semibold mb-2 text-amber-400">
                     Username
                 </label>
                 <input type="text"
                        name="{{ form.username.name }}"
                        id="{{ form.username.id_for_label }}"
                        value="{{ form.username.value|default:'' }}"
-                       class="w-full bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-red-500 transition"
+                       class="vintage-input rounded-lg px-4 py-3 w-full"
                        placeholder="Choose a username"
                        required>
                 {% if form.username.errors %}
                 <p class="mt-1 text-sm text-red-400">{{ form.username.errors.0 }}</p>
                 {% endif %}
                 {% if form.username.help_text %}
-                <p class="mt-1 text-xs text-gray-500">{{ form.username.help_text }}</p>
+                <p class="mt-1 text-xs text-amber-200/50 italic">{{ form.username.help_text }}</p>
                 {% endif %}
             </div>
 
             <div>
-                <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium mb-2">
+                <label for="{{ form.email.id_for_label }}" class="block text-sm font-semibold mb-2 text-amber-400">
                     Email Address
                 </label>
                 <input type="email"
                        name="{{ form.email.name }}"
                        id="{{ form.email.id_for_label }}"
                        value="{{ form.email.value|default:'' }}"
-                       class="w-full bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-red-500 transition"
+                       class="vintage-input rounded-lg px-4 py-3 w-full"
                        placeholder="your.email@example.com"
                        required>
                 {% if form.email.errors %}
@@ -54,31 +68,31 @@
             </div>
 
             <div>
-                <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium mb-2">
+                <label for="{{ form.password1.id_for_label }}" class="block text-sm font-semibold mb-2 text-amber-400">
                     Password
                 </label>
                 <input type="password"
                        name="{{ form.password1.name }}"
                        id="{{ form.password1.id_for_label }}"
-                       class="w-full bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-red-500 transition"
+                       class="vintage-input rounded-lg px-4 py-3 w-full"
                        placeholder="Create a strong password"
                        required>
                 {% if form.password1.errors %}
                 <p class="mt-1 text-sm text-red-400">{{ form.password1.errors.0 }}</p>
                 {% endif %}
                 {% if form.password1.help_text %}
-                <p class="mt-1 text-xs text-gray-500">{{ form.password1.help_text }}</p>
+                <p class="mt-1 text-xs text-amber-200/50 italic">{{ form.password1.help_text }}</p>
                 {% endif %}
             </div>
 
             <div>
-                <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium mb-2">
+                <label for="{{ form.password2.id_for_label }}" class="block text-sm font-semibold mb-2 text-amber-400">
                     Confirm Password
                 </label>
                 <input type="password"
                        name="{{ form.password2.name }}"
                        id="{{ form.password2.id_for_label }}"
-                       class="w-full bg-black bg-opacity-50 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-red-500 transition"
+                       class="vintage-input rounded-lg px-4 py-3 w-full"
                        placeholder="Confirm your password"
                        required>
                 {% if form.password2.errors %}
@@ -86,25 +100,24 @@
                 {% endif %}
             </div>
 
-            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded p-4">
-                <p class="text-sm text-gray-400">
-                    <strong class="text-white">Password requirements:</strong><br>
+            <div class="vintage-card rounded-lg p-4 border border-amber-900/30">
+                <p class="text-sm text-amber-200/70 font-serif">
+                    <strong class="text-amber-400">Password requirements:</strong><br>
                     • At least 8 characters long<br>
                     • Cannot be too similar to your username<br>
                     • Cannot be a commonly used password
                 </p>
             </div>
 
-            <button type="submit"
-                    class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded transition">
+            <button type="submit" class="w-full vintage-btn py-3">
                 Create Account
             </button>
         </form>
 
-        <div class="mt-6 text-center">
-            <p class="text-gray-400">
+        <div class="mt-6 text-center border-t border-amber-900/30 pt-6">
+            <p class="text-amber-200/70 font-serif">
                 Already have an account?
-                <a href="{% url 'accounts:login' %}" class="text-red-500 hover:text-red-400 transition font-semibold">
+                <a href="{% url 'accounts:login' %}" class="text-amber-400 hover:text-amber-300 transition font-bold ml-1">
                     Login here
                 </a>
             </p>

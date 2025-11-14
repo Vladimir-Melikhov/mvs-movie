@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Watch {{ movie.title }} - VideoHub{% endblock %}
+{% block title %}Watch {{ movie.title }} - Mvs-Movie{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -9,9 +9,11 @@
         width: 100%;
         max-width: 1400px;
         margin: 0 auto;
-        background: #000;
+        background: rgba(26, 15, 15, 0.95);
         border-radius: 12px;
         overflow: hidden;
+        border: 3px solid rgba(212, 175, 55, 0.4);
+        box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3);
     }
 
     .video-player {
@@ -25,7 +27,7 @@
         bottom: 0;
         left: 0;
         right: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        background: linear-gradient(to top, rgba(26, 15, 15, 0.95), transparent);
         padding: 20px;
         opacity: 0;
         transition: opacity 0.3s;
@@ -38,24 +40,26 @@
     .progress-bar {
         width: 100%;
         height: 6px;
-        background: rgba(255,255,255,0.3);
+        background: rgba(212, 175, 55, 0.2);
         border-radius: 3px;
         cursor: pointer;
         margin-bottom: 15px;
         position: relative;
+        border: 1px solid rgba(212, 175, 55, 0.3);
     }
 
     .progress-filled {
         height: 100%;
-        background: #10b981;
+        background: linear-gradient(90deg, #d4af37, #f4d03f);
         border-radius: 3px;
         transition: width 0.1s;
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
     }
 
     .progress-buffered {
         position: absolute;
         height: 100%;
-        background: rgba(255,255,255,0.5);
+        background: rgba(212, 175, 55, 0.3);
         border-radius: 3px;
     }
 
@@ -66,17 +70,19 @@
     }
 
     .control-btn {
-        background: none;
-        border: none;
-        color: white;
+        background: rgba(139, 0, 0, 0.5);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        color: #d4af37;
         cursor: pointer;
         padding: 8px;
         border-radius: 6px;
-        transition: background 0.3s;
+        transition: all 0.3s;
     }
 
     .control-btn:hover {
-        background: rgba(255,255,255,0.2);
+        background: rgba(139, 0, 0, 0.8);
+        border-color: #d4af37;
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
     }
 
     .volume-control {
@@ -87,12 +93,15 @@
 
     .volume-slider {
         width: 80px;
+        accent-color: #d4af37;
     }
 
     .time-display {
-        color: white;
+        color: #d4af37;
         font-size: 14px;
         margin-left: auto;
+        font-family: 'Crimson Text', serif;
+        font-weight: 600;
     }
 
     .no-video-message {
@@ -107,12 +116,15 @@
 
     .limit-warning {
         background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-        color: white;
+        color: #f5f5dc;
         padding: 12px 20px;
         border-radius: 8px;
         margin-bottom: 20px;
         text-align: center;
         font-weight: 600;
+        font-family: 'Crimson Text', serif;
+        border: 2px solid rgba(212, 175, 55, 0.3);
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
     }
 </style>
 {% endblock %}
@@ -122,7 +134,7 @@
     <!-- Back Button -->
     <div class="mb-6">
         <a href="{% url 'movies:movie_detail' movie.slug %}"
-           class="inline-flex items-center text-red-500 hover:text-red-400 transition">
+           class="inline-flex items-center text-amber-400 hover:text-amber-300 transition font-serif">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
@@ -205,16 +217,15 @@
     </div>
 
     <!-- Movie Info -->
-    <div class="bg-gray-900 rounded-lg border border-gray-800 p-6">
+    <div class="vintage-card rounded-lg border border-amber-900/30 p-6 shadow-xl">
         <div class="flex items-start justify-between">
             <div>
-                <h1 class="text-3xl font-bold mb-2">{{ movie.title }}</h1>
-                <p class="text-gray-400">
+                <h1 class="ornate-title text-3xl mb-2">{{ movie.title }}</h1>
+                <p class="text-amber-200/70 font-serif">
                     {{ movie.year }} • {{ movie.category.name }} • {{ movie.get_duration_display }}
                 </p>
             </div>
-            <a href="{% url 'movies:movie_detail' movie.slug %}"
-               class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded transition">
+            <a href="{% url 'movies:movie_detail' movie.slug %}" class="vintage-btn py-2 px-6">
                 More Info
             </a>
         </div>
@@ -224,15 +235,14 @@
     <!-- No Video Available -->
     <div class="video-container">
         <div class="no-video-message">
-            <svg class="w-20 h-20 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-20 h-20 text-amber-400/50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
             </svg>
-            <h2 class="text-2xl font-bold mb-2">Video Not Available</h2>
-            <p class="text-gray-400 mb-6">
+            <h2 class="ornate-title text-2xl mb-2">No Video Available</h2>
+            <p class="text-amber-200/70 font-serif mb-6">
                 This movie doesn't have a video file uploaded yet.
             </p>
-            <a href="{% url 'movies:movie_detail' movie.slug %}"
-               class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded transition">
+            <a href="{% url 'movies:movie_detail' movie.slug %}" class="vintage-btn py-3 px-6">
                 Back to Movie Details
             </a>
         </div>

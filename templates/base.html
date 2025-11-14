@@ -227,7 +227,7 @@
     <header class="vintage-card fixed w-full top-0 z-50 shadow-2xl">
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between flex-wrap gap-4">
-                <a href="{% url 'movies:home' %}" class="ornate-title text-3xl md:text-4xl">Mvc-Movie</a>
+                <a href="{% url 'movies:home' %}" class="ornate-title text-3xl md:text-4xl">Mvs-Movie</a>
                 
                 <!-- Desktop Navigation -->
                 <nav class="hidden lg:flex space-x-6">
@@ -304,7 +304,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 pt-32 pb-12 relative z-10">
+    <main class="container mx-auto px-4 pt-40 md:pt-36 lg:pt-32 pb-12 relative z-10">
         {% if messages %}
         <div class="mb-6">
             {% for message in messages %}
