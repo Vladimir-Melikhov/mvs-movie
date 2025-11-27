@@ -19,9 +19,9 @@ import json
 from apps.movies.models import Movie
 from apps.subscribe.utils import can_watch_video, get_daily_watch_limit, update_watch_time
 from .models import WatchHistory
+from apps.core.mixins import EmailVerificationRequiredMixin
 
-
-class VideoPlayerView(LoginRequiredMixin, View):
+class VideoPlayerView(LoginRequiredMixin, EmailVerificationRequiredMixin ,View):
     """
     View for displaying video player with subscription checks.
     """
