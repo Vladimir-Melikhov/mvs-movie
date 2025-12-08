@@ -223,13 +223,11 @@
 </head>
 <body>
 
-    <!-- Header -->
     <header class="vintage-card fixed w-full top-0 z-50 shadow-2xl">
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between flex-wrap gap-4">
                 <a href="{% url 'movies:home' %}" class="ornate-title text-3xl md:text-4xl">Mvs-Movie</a>
                 
-                <!-- Desktop Navigation -->
                 <nav class="hidden lg:flex space-x-6">
                     <a href="{% url 'movies:home' %}" class="hover:text-amber-400 transition font-semibold">Movies</a>
                     <a href="{% url 'movies:search' %}" class="hover:text-amber-400 transition font-semibold">Search</a>
@@ -239,9 +237,7 @@
                     {% endif %}
                 </nav>
 
-                <!-- Right Side Controls -->
                 <div class="flex items-center space-x-4">
-                    <!-- Search Form -->
                     <form method="get" action="{% url 'movies:search' %}" class="hidden md:block">
                         <input type="text"
                               name="q"
@@ -251,7 +247,6 @@
                     </form>
 
                     {% if user.is_authenticated %}
-                    <!-- User Menu -->
                     <div x-data="{ open: false }" class="relative">
                         <button @click="open = !open" class="flex items-center space-x-2 vintage-btn py-2 px-3">
                             {% if user.avatar %}
@@ -292,7 +287,6 @@
                 </div>
             </div>
 
-            <!-- Mobile Search -->
             <form method="get" action="{% url 'movies:search' %}" class="mt-4 md:hidden">
                 <input type="text"
                       name="q"
@@ -303,7 +297,6 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="container mx-auto px-4 pt-40 md:pt-36 lg:pt-32 pb-12 relative z-10">
         {% if messages %}
         <div class="mb-6">
@@ -318,7 +311,6 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
     <footer class="vintage-card mt-16 py-12 border-t-2 relative z-10">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -345,15 +337,41 @@
                     <h4 class="font-bold mb-4 text-amber-400">Legal</h4>
                     <ul class="space-y-2 text-amber-200/70">
                         <li><a href="#" class="hover:text-amber-400 transition">Terms of Service</a></li>
-                        <li><a href="#" class="hover:text-amber-400 transition">Privacy Policy</a></li>
+                        <li><a href="{% url 'privacy_policy' %}" class="hover:text-amber-400 transition">Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="mt-8 pt-8 border-t border-amber-900/30 text-center text-amber-200/50">
-                <p>&copy; 2025 Mvs-movie. All rights reserved.</p>
+            <div class="mt-8 pt-8 border-t border-amber-900/30 text-center">
+                <p class="text-amber-200/50">&copy; 2025 Mvs-movie. All rights reserved.</p>
+                <p class="text-amber-400/60 text-xs mt-2 font-serif uppercase tracking-widest border border-amber-900/30 inline-block px-3 py-1 rounded">
+                    Demo Project • No Real Services • Educational Purpose Only
+                </p>
             </div>
         </div>
     </footer>
+
+    <div x-data="{ show: !localStorage.getItem('cookie_consent') }"
+         x-show="show"
+         x-transition:enter="transition ease-out duration-500"
+         x-transition:enter-start="translate-y-full opacity-0"
+         x-transition:enter-end="translate-y-0 opacity-100"
+         class="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6"
+         style="display: none;"> <div class="vintage-card rounded-lg shadow-2xl p-6 border-t-4 border-amber-400 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 bg-[#1a0f0f] relative">
+            <div class="flex-1">
+                <h4 class="ornate-title text-xl text-amber-400 mb-2">Cookie Notice</h4>
+                <p class="text-amber-100/80 font-serif text-sm">
+                    We use cookies to ensure you get the best cinema experience. This is a demo project.
+                    By continuing, you agree to our <a href="{% url 'privacy_policy' %}" class="text-amber-400 hover:underline">Privacy Policy</a>.
+                </p>
+            </div>
+            <div class="flex-shrink-0">
+                <button @click="localStorage.setItem('cookie_consent', 'true'); show = false"
+                        class="vintage-btn py-2 px-8 text-sm">
+                    Accept & Enter
+                </button>
+            </div>
+        </div>
+    </div>
 
     {% block extra_js %}{% endblock %}
 </body>
